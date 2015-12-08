@@ -71,6 +71,11 @@ If additional functionality is required when a tag is added or removed, you may
 specify callback functions via the onAddTag and onRemoveTag parameters.  Both
 functions should accept a single tag as the parameter.
 
+Also you can extend functionality specifying callback functions to decide if a 
+tag should be added or removed via the onBeforeAddTag and onBeforeRemoveTag parameters. 
+Both functions should accept a single tag as the parameter and return true if 
+the tag should be added or removed, and false otherwise.
+
 If you do not want to provide a way to add tags, or you would prefer to provide
 an alternate interface for adding tags to the box, you may pass an false into
 the optional 'interactive' parameter. The tags will still be rendered as per
@@ -92,7 +97,9 @@ option to false.
 	   'width':'300px',
 	   'interactive':true,
 	   'defaultText':'add a tag',
+	   'onBeforeAddTag':callback_function,
 	   'onAddTag':callback_function,
+	   'onBeforeRemoveTag':callback_function,
 	   'onRemoveTag':callback_function,
 	   'onChange' : callback_function,
 	   'delimiter': [',',';'],   // Or a string with a single delimiter. Ex: ';'

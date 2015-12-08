@@ -78,6 +78,20 @@
 			this.each(function() {
 				var id = $(this).attr('id');
 
+				if (options.callback && tags_callbacks[id] && tags_callbacks[id]['onBeforeAddTag']) {
+					var f = tags_callbacks[id]['onBeforeAddTag'];
+					if(!f.call(this, value)) {
+						// remove the text from the tags field
+						$('#'+id+'_tag').val('');
+						if (options.focus) {
+							$('#'+id+'_tag').focus();
+						} else {
+							$('#'+id+'_tag').blur();
+						}
+						return false;
+					}
+				}
+
 				var tagslist = $(this).val().split(delimiter[id]);
 				if (tagslist[0] == '') {
 					tagslist = new Array();
@@ -139,6 +153,13 @@
 			value = unescape(value);
 			this.each(function() {
 				var id = $(this).attr('id');
+
+				if (tags_callbacks[id] && tags_callbacks[id]['onBeforeRemoveTag']) {
+					var f = tags_callbacks[id]['onBeforeRemoveTag'];
+					if(!f.call(this, value)) {
+						return false;
+					}
+				}
 
 				var old = $(this).val().split(delimiter[id]);
 
@@ -221,8 +242,11 @@
 
 			delimiter[id] = data.delimiter;
 
-			if (settings.onAddTag || settings.onRemoveTag || settings.onChange) {
+			if (settings.onBeforeAddTag || settings.onBeforeRemoveTag || 
+				settings.onAddTag || settings.onRemoveTag || settings.onChange) {
 				tags_callbacks[id] = new Array();
+				tags_callbacks[id]['onBeforeAddTag'] = settings.onBeforeAddTag;
+				tags_callbacks[id]['onBeforeRemoveTag'] = settings.onBeforeRemoveTag;
 				tags_callbacks[id]['onAddTag'] = settings.onAddTag;
 				tags_callbacks[id]['onRemoveTag'] = settings.onRemoveTag;
 				tags_callbacks[id]['onChange'] = settings.onChange;
